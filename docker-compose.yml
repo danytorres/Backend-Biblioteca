@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  colegioelasticsearch:
+    image: registry.gitlab.com/danytorres/colegio-back:latest
+    container_name: colegioelasticsearch
+    build: .
+    volumes:
+      - ./elastic/static:/app/static
+      - ./elastic/uploads:/app/uploads
+    depends_on:
+      - db
+      - es01
+    ports:
+      - 8000:8000
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+
+  db:
+    image: postgres:13.1-alpine
+    environment:
+      - POSTGRES_DB=elasticSearch
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes: 
+      - data02:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.docker/config.json:/config.json
+    command: colegioelasticsearch --interval 600 --cleanup
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
