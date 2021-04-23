@@ -110,7 +110,7 @@ class VerDocumento(APIView):
 
             fieldToSearch = request.query_params["fields"].split(
                 ","
-            )  # Combierte el string a un array
+            )  
             searchQuery = searchQuery.query(
                 "multi_match", query=searchString, fields=fieldToSearch
             )
@@ -139,16 +139,12 @@ class VerDocumento(APIView):
                 status=status.HTTP_200_OK,
             )
 
-        # ------ Query de busqueda en elastic search y se guardan los resultados en response ---------
+        # Query de busqueda en elastic search y se guardan los resultados en response 
         responseQuery = searchQuery.execute()
-        # --------------------------------------------------------------------------------------------
-
-        # Deserializacion de resultados de busqueda --------------------------------------------------
         deSerializer = DocumentoSerializer(responseQuery.hits, many=True)
-        # --------------------------------------------------------------------------------------------
 
-        # ------ Por falla en deserializacion no manda el link del documento, ------------------------
-        # ------ asi que se usa la respuesta de elastic para llenar ese campo ------------------------
+        # Por falla en deserializacion no manda el link del documento, 
+        # asi que se usa la respuesta de elastic para llenar ese campo 
         for i in range(0, len(deSerializer.data)):
             deSerializer.data[i]["legislationTranscriptOriginal"] = responseQuery.hits[
                 i

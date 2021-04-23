@@ -18,17 +18,15 @@ SERVER = config("SERVER")
 @permission_classes([AllowAny])
 def register(request):
     """
-    Registers user to the server. Input should be in the format:
+    Registra al usuario en el servidor. La entrada debe estar en el formato:
     {"username": "username", "password": "1234abcd"}
     """
-    # Put the data from the request into the serializer
     serializer = CreateUserSerializer(data=request.data)
-    # Validate the data
+
     if serializer.is_valid():
-        # If it is valid, save the data (creates a user).
+
         serializer.save()
-        # Then we get a token for the created user.
-        # This could be done differentley
+
         r = requests.post(
             f"{SERVER}/o/token/",
             data={
@@ -49,7 +47,7 @@ def register(request):
 @permission_classes([AllowAny])
 def token(request):
     """
-    Gets tokens with username and password. Input should be in the format:
+    Obtiene tokens con nombre de usuario y contraseña. La entrada debe estar en el formato:
     {"username": "username", "password": "1234abcd"}
     """
     r = requests.post(
@@ -71,7 +69,7 @@ def token(request):
 @permission_classes([AllowAny])
 def refresh_token(request):
     """
-    Registers user to the server. Input should be in the format:
+    Registra al usuario en el servidor. La entrada debe estar en el formato:
     {"refresh_token": "<token>"}
     """
     r = requests.post(
@@ -90,7 +88,7 @@ def refresh_token(request):
 @permission_classes([AllowAny])
 def revoke_token(request):
     """
-    Method to revoke tokens.
+    Método para revocar tokens.
     {"token": "<token>"}
     """
     r = requests.post(
@@ -101,8 +99,8 @@ def revoke_token(request):
             "client_secret": CLIENT_SECRET,
         },
     )
-    # If it goes well return sucess message (would be empty otherwise)
+
     if r.status_code == requests.codes["ok"]:
         return Response({"message": "token revoked"}, r.status_code)
-    # Return the error if it goes badly
+
     return Response(r.json(), r.status_code)

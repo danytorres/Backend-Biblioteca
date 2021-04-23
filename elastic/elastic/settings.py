@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "django_elasticsearch_dsl",  # Framework para conectarse a elastic search
     "corsheaders",  # Aplicacion para manejar los CORS
     "rest_framework",  # Rest API
     "oauth2_provider",  # OAuth2
+    
     "search",
     "dispositions",
     "affair",
